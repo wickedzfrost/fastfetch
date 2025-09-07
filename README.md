@@ -328,3 +328,7 @@ Give us a star to show your support!
     <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=fastfetch-cli/fastfetch&type=Date" />
   </picture>
 </a>
+
+## Fork changes
+
+* Add build automation for the CI/CD of this project.
