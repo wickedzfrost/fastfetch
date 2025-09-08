@@ -1,0 +1,57 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ * ]
+  pull_request:
+    branches: [ * ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential cmake pkg-config \
+          libpci-dev libvulkan-dev libwayland-dev libxrandr-dev \
+          libxcb-randr0-dev libdconf-dev libdbus-1-dev libmagickcore-dev \
+          libxfconf-0-dev libsqlite3-dev librpm-dev libegl-dev libglx-dev \
+          libosmesa6-dev ocl-icd-opencl-dev libnm-dev libpulse-dev
+
+    - name: Build
+      run: |
+        mkdir build
+        cd build
+        cmake -DBUILD_TESTS=ON ..
+        cmake --build . --target fastfetch -j$(nproc)
+
+    - name: Run tests
+      run: |
+        cd build
+        ctest --output-on-failure
+
+    - name: Upload binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: fastfetch-binary
+        path: build/fastfetch
+
+  docker-build:
+    needs: build-and-test
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'push'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Docker image
+      run: docker build -t fastfetch:latest .
+
+    - name: Test Docker image
+      run: docker run --rm fastfetch:latest --version
