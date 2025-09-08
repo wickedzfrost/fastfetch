@@ -1,0 +1,68 @@
+plugins {
+    id 'base'
+}
+
+group 'com.fastfetch'
+version getVersionFromGit()
+
+def getVersionFromGit() {
+    def gitTag = 'git describe --tags --abbrev=0'.execute().text.trim() ?: '1.0.0'
+    def gitCount = 'git rev-list --count HEAD'.execute().text.trim() ?: '1'
+    def gitHash = 'git rev-parse --short HEAD'.execute().text.trim() ?: 'unknown'
+    return "${gitTag}.${gitCount}-${gitHash}"
+}
+
+// Remove the dependencies block - CMake, GCC, and CTest are system tools
+// that need to be installed on your system, not managed as Gradle dependencies
+
+// Task to build FastFetch
+task Build(type: Exec) {
+    doFirst {
+        println "Building FastFetch version: ${version}"
+        delete 'build'
+        mkdir 'build'
+    }
+   
+    workingDir 'build'
+    commandLine 'cmake', '..', '-DCMAKE_BUILD_TYPE=Release', '-DBUILD_TESTS=ON'
+   
+    doLast {
+        exec {
+            workingDir 'build'
+            commandLine 'cmake', '--build', '.'
+        }
+        println "Build completed"
+    }
+}
+
+// Task to run CTest
+task RunTest(type: Exec) {
+    dependsOn Build
+   
+    doFirst {
+        println "Running CTest..."
+    }
+   
+    workingDir 'build'
+    commandLine 'ctest', '--output-on-failure'
+   
+    doLast {
+        println "Test completed"
+    }
+}
+
+// Task to create distribution archive
+task CreateArchive(type: Zip) {
+    dependsOn Build
+   
+    from 'build/fastfetch'
+    from 'README.md'
+    from 'LICENSE'
+   
+    doFirst {
+        archiveFileName = "fastfetch-${version}.zip"
+        destinationDirectory = file('build/distributions')
+    }
+}
+
+defaultTasks 'RunTest'

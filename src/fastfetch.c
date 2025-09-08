@@ -816,22 +816,28 @@ int main(int argc, char** argv)
 {
     ffInitInstance();
     atexit(ffDestroyInstance);
-
+    
+    // ADD THIS LINE HERE
+    printf("This is UECS2363 SOFTWARE CONSTRUCTION AND CONFIGURATION\n");
+    
     //Data stores things only needed for the configuration of fastfetch
     FFdata data = {
         .structure = ffStrbufCreate(),
         .configLoaded = false,
     };
-
+    
     parseArguments(&data, argc, argv, parseCommand);
     if(!data.configLoaded && !getenv("NO_CONFIG"))
         parseConfigFiles();
     parseArguments(&data, argc, argv, (void*) parseOption);
-
+    
     if (__builtin_expect(instance.state.genConfigPath.length == 0, true))
         run(&data);
     else
         writeConfigFile(&data);
-
+    
+    // ADD THIS LINE HERE
+    printf("This is end of process\n");
+    
     ffStrbufDestroy(&data.structure);
 }
