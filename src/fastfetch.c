@@ -836,4 +836,7 @@ int main(int argc, char** argv)
         writeConfigFile(&data);
 
     ffStrbufDestroy(&data.structure);
+
+    printf("============================================================================================\n");
+    printf("End of program!\n");
 }
