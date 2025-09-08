@@ -331,4 +331,5 @@ Give us a star to show your support!
 
 ## Fork changes
 
-* Add build automation for the CI/CD of this project.
+* Add Dockerfile for deployment
+* Modified ci.yml for the CI/CD of this project.
