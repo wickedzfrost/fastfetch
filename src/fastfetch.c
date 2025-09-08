@@ -645,7 +645,7 @@ static void parseCommand(FFdata* data, char* key, char* value)
         switch (ffOptionParseEnum(key, value, (FFKeyValuePair[]) {
             { "default", 0},
             { "json", 1 },
-            {},
+            { NULL, 0 },
         }))
         {
             case 0:
