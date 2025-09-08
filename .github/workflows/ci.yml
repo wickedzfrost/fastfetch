@@ -54,4 +54,4 @@ jobs:
       run: docker build -t fastfetch:latest .
 
     - name: Test Docker image
-      run: docker run --rm fastfetch:latest --version
+      run: docker run fastfetch:latest
