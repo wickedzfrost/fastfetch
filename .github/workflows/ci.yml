@@ -28,7 +28,7 @@ jobs:
         mkdir build
         cd build
         cmake -DBUILD_TESTS=ON ..
-        cmake --build . --target fastfetch -j$(nproc)
+        cmake --build . -j$(nproc)
 
     - name: Run tests
       run: |
